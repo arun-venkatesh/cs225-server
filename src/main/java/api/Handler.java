@@ -1,5 +1,6 @@
 package api;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ public class Handler {
 
 	@PostMapping("/upload")
 	public String dumpData(@RequestBody String data) throws Exception {
-		JSONObject obj = new JSONObject(data);
+		JSONArray obj = new JSONArray(data);
 		
 		JSONObject returnObj = new JSONObject();
 		try
