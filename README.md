@@ -1,2 +1,6 @@
-# cs225-server
-CS225 - Fall 21
+# CS225 - Fall 21
+## Team - 6<br>
+Arun Venkatesh <br>
+Ponmanikandan Velmurugan<br>
+Rucha Kolhatkar<br>
+Baslyos Tesfamariam<br>
