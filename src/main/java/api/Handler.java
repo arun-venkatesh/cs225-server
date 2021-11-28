@@ -15,6 +15,8 @@ import com.google.common.base.Throwables;
 import java.sql.*;
 import org.postgis.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
@@ -249,7 +251,7 @@ public class Handler {
 	}
 	
 	@PutMapping("/user")
-	public String updateUser(@RequestBody String id, @RequestBody String data) throws Exception {
+	public String updateUser(@RequestBody Map<String, String> json) throws Exception {
 		JSONObject returnObj = new JSONObject();
 		try
 		{
@@ -268,8 +270,20 @@ public class Handler {
 			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
 			Statement stmt = conn.createStatement();
 
-			
-			
+			String id = json.get("id");
+			String data = json.get("data");
+
+			JSONObject obj = new JSONObject(data);
+
+			String registration_token = obj.get("registration_token").toString();
+            String status = obj.get("status").toString();
+
+			String UPDATE_QUERY = "UPDATE \"UserMaster\" \n" +
+                "SET registration_token = \'" + registration_token + "\', status = " + status + "\n" +
+                "WHERE id = " + id + ";";
+
+			stmt.executeUpdate(UPDATE_QUERY);
+
 			conn.close();
 
 			if(success)
@@ -326,7 +340,7 @@ public class Handler {
 				int age = all.getInt("age");
 				String state = all.getString("state");
 				String city = all.getString("city");
-				String status = all.getString("status");
+				int status = all.getInt("status");
 
 				returnObj.put("id", ID);
 				returnObj.put("name", name);
