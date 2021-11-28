@@ -90,7 +90,7 @@ public class Handler {
 
             	String INSERT = "INSERT INTO \"ContactTracingMaster\"( \n" +
 					"\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
-					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + "," + latitude + ")\');";
+					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
             	
             	System.out.println(INSERT);
 				stmt.executeUpdate(INSERT);
@@ -149,6 +149,7 @@ public class Handler {
 				String name = entry.get("name").toString();
 				name = (name.equals("NULL")) ? name : "\'" + name + "\'";
 				String user_name = entry.get("user_name").toString(); // NOT NULL value
+				user_name = (user_name.equals("NULL")) ? user_name : "\'" + user_name + "\'";
 				String secret_key = entry.get("secret_key").toString();
 				secret_key = (secret_key.equals("NULL")) ? secret_key : "\'" + secret_key + "\'";
 				String registration_token = entry.get("registration_token").toString();
@@ -164,6 +165,7 @@ public class Handler {
 				city = (city.equals("NULL")) ? city : "\'" + city + "\'";
 				String status = entry.get("status").toString();
 				status = (status.equals("NULL")) ? status : "\'" + status + "\'";
+				
 
 				String INSERT = "INSERT INTO \"UserMaster\"( \n" +
 					"\nname, user_name, secret_key, registration_token, phone_number, gender, age, state, city, status) \n" +
@@ -247,7 +249,7 @@ public class Handler {
 	}
 	
 	@PutMapping("/user")
-	public String updateUser(@RequestBody String id, String data) throws Exception {
+	public String updateUser(@RequestBody String id, @RequestBody String data) throws Exception {
 		JSONObject returnObj = new JSONObject();
 		try
 		{
@@ -314,7 +316,6 @@ public class Handler {
 
             String ALL_QUERY = "SELECT * FROM \"Temp\";";
             ResultSet all = stmt.executeQuery(ALL_QUERY);
-			
 			while(all.next()) {
 				long ID = all.getLong("id");
 				String name = all.getString("name");
@@ -325,7 +326,7 @@ public class Handler {
 				int age = all.getInt("age");
 				String state = all.getString("state");
 				String city = all.getString("city");
-				boolean status = all.getBoolean("status");
+				String status = all.getString("status");
 
 				returnObj.put("id", ID);
 				returnObj.put("name", name);
