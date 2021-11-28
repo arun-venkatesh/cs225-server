@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.base.Throwables;
+
 import java.sql.*;
 import org.postgis.*;
 
@@ -18,9 +20,9 @@ import org.postgis.*;
 @CrossOrigin("*")
 public class Handler {
 
-	static final String DB_URL = "jdbc:postgresql://localhost:25432/SixFtTracing"; // Change SixFtTracing to name of database
-    static final String USER = "docker";
-    static final String PASS = "docker";
+	static final String DB_URL = "jdbc:postgresql://localhost:5432/SixFtTracing"; // Change SixFtTracing to name of database
+    static final String USER = "postgres";
+    static final String PASS = "root";
 
 	@PostMapping("/upload")
 	public String dumpData(@RequestBody String data) throws Exception {
@@ -66,6 +68,7 @@ public class Handler {
 
 
 				String ID_QUERY1 = "SELECT id FROM \"UserMaster\" WHERE user_name = \'" + user_one + "\';";
+				System.out.println(ID_QUERY1);
             	ResultSet id_one = stmt.executeQuery(ID_QUERY1);
 
             	int user_id_one = 0;
@@ -75,8 +78,10 @@ public class Handler {
             	}
 
             	String ID_QUERY2 = "SELECT id FROM \"UserMaster\" WHERE user_name = \'" + user_two + "\';";
+            	System.out.println(ID_QUERY2);
             	ResultSet id_two = stmt.executeQuery(ID_QUERY2);
 
+            	
            		int user_id_two = 0;
 
             	while(id_two.next()) {
@@ -85,8 +90,9 @@ public class Handler {
 
             	String INSERT = "INSERT INTO \"ContactTracingMaster\"( \n" +
 					"\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
-					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
-
+					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + "," + latitude + ")\');";
+            	
+            	System.out.println(INSERT);
 				stmt.executeUpdate(INSERT);
 			}
 
@@ -97,6 +103,7 @@ public class Handler {
 			returnObj.put("status_code", 200);
 		}catch(Exception e)
 		{
+			System.out.println(Throwables.getStackTraceAsString(e));
 			returnObj = new JSONObject();
 			returnObj.put("message", "internal server error");
 			returnObj.put("status_code", 500);
@@ -161,6 +168,7 @@ public class Handler {
 				String INSERT = "INSERT INTO \"UserMaster\"( \n" +
 					"\nname, user_name, secret_key, registration_token, phone_number, gender, age, state, city, status) \n" +
 					"\tVALUES(" + name + ", " + user_name + ", " + secret_key + ", " + registration_token + ", " + phone_number + ", " + gender + ", " + age + ", " + state + ", " + city + ", " + status + ");";
+				System.out.println(INSERT);
 
 				stmt.executeUpdate(INSERT);
 			}
@@ -172,6 +180,7 @@ public class Handler {
 			returnObj.put("status_code", 200);
 		}catch(Exception e)
 		{
+			System.out.println(Throwables.getStackTraceAsString(e));
 			returnObj = new JSONObject();
 			returnObj.put("message", "internal server error");
 			returnObj.put("status_code", 500);
@@ -195,10 +204,12 @@ public class Handler {
 			Statement stmt = conn.createStatement();
 
 			String USER_QUERY = "SELECT * FROM \"UserMaster\" WHERE user_name = \'" + user_name + "\';";
+			System.out.println(USER_QUERY);
 			ResultSet user = stmt.executeQuery(USER_QUERY);
-
+			
 			if(user.next()) {
 				String PWD_QUERY = "SELECT secret_key FROM \"UserMaster\" WHERE user_name = \'" + user_name + "\';";
+				System.out.println(PWD_QUERY);
 				ResultSet pwd = stmt.executeQuery(PWD_QUERY);
 
 				String secretKey = "";
@@ -227,6 +238,7 @@ public class Handler {
 			
 		}catch(Exception e)
 		{
+			System.out.println(Throwables.getStackTraceAsString(e));
 			returnObj = new JSONObject();
 			returnObj.put("message", "internal server error");
 			returnObj.put("status_code", 500);
@@ -270,6 +282,7 @@ public class Handler {
 			
 		}catch(Exception e)
 		{
+			System.out.println(Throwables.getStackTraceAsString(e));
 			returnObj = new JSONObject();
 			returnObj.put("message", "internal server error");
 			returnObj.put("status_code", 500);
@@ -333,6 +346,7 @@ public class Handler {
 			
 		}catch(Exception e)
 		{
+			System.out.println(Throwables.getStackTraceAsString(e));
 			returnObj = new JSONObject();
 			returnObj.put("message", "internal server error");
 			returnObj.put("status_code", 500);
