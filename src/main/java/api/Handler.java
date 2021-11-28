@@ -3,7 +3,9 @@ package api;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,4 +83,134 @@ public class Handler {
 		return returnObj.toString();
 		
 	}
+	
+	/*
+	 * User APIs
+	 */
+	@PostMapping("/user")
+	public String createUser(@RequestBody String data) throws Exception {
+		JSONArray obj = new JSONArray(data);
+		
+		JSONObject returnObj = new JSONObject();
+		try
+		{
+			//WRITE CODE HERE
+			/*
+			 *  {
+			 *     "name":"arun",
+			 *     "user_name":"arunvenkatesh",
+			 *     "secret_key":"password",
+			 *     "registration_token":"24Zdsjbsdjadjadn283293",
+			 *     "phone_number":"9512231444",
+			 *     "gender":"M",
+			 *     "age":"25",
+			 *     "state":"California",
+			 *     "city":"Riverside",
+			 *     "status":-1 //-1 : Negative, 0 - Symptomatic, 1 - Positive 
+			 *  }
+			 */
+
+			
+			
+			returnObj.put("message", "success");
+			returnObj.put("data", obj.toString()); //Currently included for testing
+			returnObj.put("status_code", 200);
+		}catch(Exception e)
+		{
+			returnObj = new JSONObject();
+			returnObj.put("message", "internal server error");
+			returnObj.put("status_code", 500);
+		}
+		return returnObj.toString();
+		
+	}
+	
+	@GetMapping("/user/login")
+	public String validateUser(String user_name, String password) throws Exception {
+		JSONObject returnObj = new JSONObject();
+		try
+		{
+			Boolean success = Boolean.FALSE;
+			//WRITE CODE HERE
+			
+
+			if(success)
+			{
+				returnObj.put("message", "success");
+				returnObj.put("status_code", 200);
+			}
+			else
+			{
+				returnObj.put("message", "invalid credentials");
+				returnObj.put("status_code", 401);
+			}
+			
+		}catch(Exception e)
+		{
+			returnObj = new JSONObject();
+			returnObj.put("message", "internal server error");
+			returnObj.put("status_code", 500);
+		}
+		return returnObj.toString();
+	}
+	
+	@PutMapping("/user")
+	public String updateUser(@RequestBody String id, String data) throws Exception {
+		JSONObject returnObj = new JSONObject();
+		try
+		{
+			Boolean success = Boolean.FALSE;
+			//WRITE CODE HERE - Lets assume updates happen only for status and tokens
+			/*
+			 *  {
+			 *     "registration_token":"24Zdsjbsdjadjadn283293",
+			 *     "status":-1 //-1 : Negative, 0 - Symptomatic, 1 - Positive 
+			 *  }
+			 */
+
+			if(success)
+			{
+				returnObj.put("message", "success");
+				returnObj.put("status_code", 200);
+			}
+			else
+			{
+				throw new Exception();
+			}
+			
+		}catch(Exception e)
+		{
+			returnObj = new JSONObject();
+			returnObj.put("message", "internal server error");
+			returnObj.put("status_code", 500);
+		}
+		return returnObj.toString();
+	}
+	
+	@GetMapping("/user")
+	public String getUser(String id) throws Exception {
+		JSONObject returnObj = new JSONObject();
+		try
+		{
+			//WRITE CODE HERE
+			//id - id column in usermaster
+			//returns all columns except the password column in the usermaster table as a json converted to json
+			//properties can be added in the json as follows
+			//returnObj.put("key","value");
+			
+			returnObj.put("message", "success");
+			returnObj.put("status_code", 200);
+			
+		}catch(Exception e)
+		{
+			returnObj = new JSONObject();
+			returnObj.put("message", "internal server error");
+			returnObj.put("status_code", 500);
+		}
+		return returnObj.toString();
+	}
+	
+	
+	
+	
 }
