@@ -58,18 +58,39 @@ public class Handler {
 		
 			for(int i = 0; i < obj.length(); i++) {
 				JSONObject entry = obj.getJSONObject(i);
-				long contact_time = (Long) entry.get("timeStamp");
-				String user_id_one = entry.get("sourceDevice").toString();
-				String user_id_two = entry.get("destinationDevice").toString();
-				double latitude = (Double) entry.get("latitude");
-				double longitude = (Double) entry.get("longitude");
+				String contact_time = entry.get("timeStamp").toString();
+				String user_one = entry.get("sourceDevice").toString();
+				String user_two = entry.get("destinationDevice").toString();
+				String latitude = entry.get("latitude").toString();
+				String longitude = entry.get("longitude").toString();
 
 
-				String QUERY = "INSERT INTO \"ContactTracingMaster\"( \n" +
-                    "\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
-                    "\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "POINT(" + longitude + " " + latitude + ")";
-				stmt.executeUpdate(QUERY);
+				String ID_QUERY1 = "SELECT id FROM \"UserMaster\" WHERE user_name = \'" + user_one + "\';";
+            	ResultSet id_one = stmt.executeQuery(ID_QUERY1);
+
+            	int user_id_one = 0;
+
+            	while(id_one.next()) {
+                	user_id_one = Integer.parseInt(id_one.getString(1));
+            	}
+
+            	String ID_QUERY2 = "SELECT id FROM \"UserMaster\" WHERE user_name = \'" + user_two + "\';";
+            	ResultSet id_two = stmt.executeQuery(ID_QUERY2);
+
+           		int user_id_two = 0;
+
+            	while(id_two.next()) {
+                	user_id_two = Integer.parseInt(id_two.getString(1));
+            	}
+
+            	String INSERT = "INSERT INTO \"ContactTracingMaster\"( \n" +
+					"\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
+					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
+
+				stmt.executeUpdate(INSERT);
 			}
+
+			conn.close();
 			
 			returnObj.put("message", "success");
 			returnObj.put("data", obj.toString()); //Currently included for testing
@@ -110,7 +131,41 @@ public class Handler {
 			 *  }
 			 */
 
-			
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			//((org.postgresql.PGConnection)conn).addDataType("geometry", PGgeometry.class);
+			//((org.postgresql.PGConnection)conn).addDataType("geography", PGgeography.class);
+			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
+			Statement stmt = conn.createStatement();
+		
+			for(int i = 0; i < obj.length(); i++) {
+				JSONObject entry = obj.getJSONObject(i);
+				String name = entry.get("name").toString();
+				name = (name.equals("NULL")) ? name : "\'" + name + "\'";
+				String user_name = entry.get("user_name").toString(); // NOT NULL value
+				String secret_key = entry.get("secret_key").toString();
+				secret_key = (secret_key.equals("NULL")) ? secret_key : "\'" + secret_key + "\'";
+				String registration_token = entry.get("registration_token").toString();
+				registration_token = (registration_token.equals("NULL")) ? registration_token : "\'" + registration_token + "\'";
+				String phone_number = entry.get("phone_number").toString();
+				phone_number = (phone_number.equals("NULL")) ? phone_number : "\'" + phone_number + "\'";
+				String gender = entry.get("gender").toString();
+				gender = (gender.equals("NULL")) ? gender : "\'" + gender + "\'";
+				String age = entry.get("age").toString();
+				String state = entry.get("state").toString();
+				state = (state.equals("NULL")) ? state : "\'" + state + "\'";
+				String city = entry.get("city").toString();
+				city = (city.equals("NULL")) ? city : "\'" + city + "\'";
+				String status = entry.get("status").toString();
+				status = (status.equals("NULL")) ? status : "\'" + status + "\'";
+
+				String INSERT = "INSERT INTO \"UserMaster\"( \n" +
+					"\nname, user_name, secret_key, registration_token, phone_number, gender, age, state, city, status) \n" +
+					"\tVALUES(" + name + ", " + user_name + ", " + secret_key + ", " + registration_token + ", " + phone_number + ", " + gender + ", " + age + ", " + state + ", " + city + ", " + status + ");";
+
+				stmt.executeUpdate(INSERT);
+			}
+
+			conn.close();
 			
 			returnObj.put("message", "success");
 			returnObj.put("data", obj.toString()); //Currently included for testing
@@ -132,7 +187,32 @@ public class Handler {
 		{
 			Boolean success = Boolean.FALSE;
 			//WRITE CODE HERE
-			
+
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			//((org.postgresql.PGConnection)conn).addDataType("geometry", PGgeometry.class);
+			//((org.postgresql.PGConnection)conn).addDataType("geography", PGgeography.class);
+			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
+			Statement stmt = conn.createStatement();
+
+			String USER_QUERY = "SELECT * FROM \"UserMaster\" WHERE user_name = \'" + user_name + "\';";
+			ResultSet user = stmt.executeQuery(USER_QUERY);
+
+			if(user.next()) {
+				String PWD_QUERY = "SELECT secret_key FROM \"UserMaster\" WHERE user_name = \'" + user_name + "\';";
+				ResultSet pwd = stmt.executeQuery(PWD_QUERY);
+
+				String secretKey = "";
+
+				while(pwd.next()) {
+					secretKey = pwd.getString(1);
+				}
+
+				if(secretKey.equals(password)) {
+					success = Boolean.TRUE;
+				}
+			}
+
+			conn.close();
 
 			if(success)
 			{
@@ -168,6 +248,16 @@ public class Handler {
 			 *  }
 			 */
 
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			//((org.postgresql.PGConnection)conn).addDataType("geometry", PGgeometry.class);
+			//((org.postgresql.PGConnection)conn).addDataType("geography", PGgeography.class);
+			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
+			Statement stmt = conn.createStatement();
+
+			
+			
+			conn.close();
+
 			if(success)
 			{
 				returnObj.put("message", "success");
@@ -197,6 +287,46 @@ public class Handler {
 			//returns all columns except the password column in the usermaster table as a json converted to json
 			//properties can be added in the json as follows
 			//returnObj.put("key","value");
+
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			//((org.postgresql.PGConnection)conn).addDataType("geometry", PGgeometry.class);
+			//((org.postgresql.PGConnection)conn).addDataType("geography", PGgeography.class);
+			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
+			Statement stmt = conn.createStatement();
+
+			String TEMP = "DROP TABLE IF EXISTS \"Temp\";\n" +
+				"CREATE TEMPORARY TABLE \"Temp\" AS SELECT * FROM \"UserMaster\" WHERE id = " + id + ";\n" +
+				"ALTER TABLE \"Temp\" DROP COLUMN secret_key;\n";
+            stmt.executeUpdate(TEMP);
+
+            String ALL_QUERY = "SELECT * FROM \"Temp\";";
+            ResultSet all = stmt.executeQuery(ALL_QUERY);
+			
+			while(all.next()) {
+				long ID = all.getLong("id");
+				String name = all.getString("name");
+				String user_name = all.getString("user_name");
+				String registration_token = all.getString("registration_token");
+				String phone_number = all.getString("phone_number");
+				String gender = all.getString("gender");
+				int age = all.getInt("age");
+				String state = all.getString("state");
+				String city = all.getString("city");
+				boolean status = all.getBoolean("status");
+
+				returnObj.put("id", ID);
+				returnObj.put("name", name);
+				returnObj.put("user_name", user_name);
+				returnObj.put("registration_token", registration_token);
+				returnObj.put("phone_number", phone_number);
+				returnObj.put("gender", gender);
+				returnObj.put("age", age);
+				returnObj.put("state", state);
+				returnObj.put("city", city);
+				returnObj.put("status", status);
+			}
+
+            conn.close();
 			
 			returnObj.put("message", "success");
 			returnObj.put("status_code", 200);
