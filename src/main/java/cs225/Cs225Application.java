@@ -1,12 +1,10 @@
 package cs225;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,12 +56,15 @@ public class Cs225Application {
     	{
     		init();
     	}
-    	//Process, fetch registeration_tokens and store it in the list below (registrationTokens)
     	
     	System.out.println("Inside Job");
-    	List<String> registrationTokens = Arrays.asList(
-    			"faW9g2JnQRSXPG6CV6IntC:APA91bEeg216szQjCmN42TcXLopOujaraCQfNtl10IqRAa8g3f0HyLumK6_EiEQA1lYCw9pWb16Wdv9ps3AIKaVCQi3xG8cx7kTN9tLCukV19GAptX6eU3UplYL0Exsfm38e2h58ebD2"
-    	);
+    	//Process, fetch registeration_tokens and store it in the list below (registrationTokens)
+    	
+    	List<String> registrationTokens = Handler.getRegisterationTokensForScheduler();
+    	
+//    	registrationTokens = Arrays.asList(
+//    			"faW9g2JnQRSXPG6CV6IntC:APA91bEeg216szQjCmN42TcXLopOujaraCQfNtl10IqRAa8g3f0HyLumK6_EiEQA1lYCw9pWb16Wdv9ps3AIKaVCQi3xG8cx7kTN9tLCukV19GAptX6eU3UplYL0Exsfm38e2h58ebD2"
+//    	);
 
 		MulticastMessage message = MulticastMessage.builder()
 		    .putData("type", "notification")
