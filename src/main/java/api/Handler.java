@@ -102,10 +102,24 @@ public class Handler {
                 	user_id_two = Integer.parseInt(id_two.getString(1));
             	}
 
+				String LOCATION_QUERY = "SELECT T.st_contains, T.city, \"us_states\".name AS state FROM (\n" + 
+                	"SELECT ST_Contains(geom, ST_GeometryFromText(\'POINT(" + longitude + " " + latitude + ")\', 4326)), name AS city, statefp FROM \"city_boundaries\"\n" +
+                	") T, \"us_states\"\n" +
+                	"WHERE st_contains = true AND T.statefp = \"us_states\".statefp;";
+            	System.out.println(LOCATION_QUERY);
+            	ResultSet location = stmt.executeQuery(LOCATION_QUERY);
+
+				String city = "";
+            	String state = "";
+
+				while(location.next()) {
+					city = location.getString("city");
+					state = location.getString("state");
+				}
+
             	String INSERT = "INSERT INTO \"ContactTracingMaster\"( \n" +
-					"\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
-					"\tVALUES(TO_TIMESTAMP(" + contact_time + "/1000) AT TIME ZONE \'PST\', " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
-            	
+					"\tcontact_time, user_id_one, user_id_two, location_of_contact, city, state) \n" +
+					"\tVALUES(TO_TIMESTAMP(" + contact_time + "/1000) AT TIME ZONE \'PST\', " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\'" + ", \'" + city + "\', \'" + state + "\');";
             	System.out.println(INSERT);
 				stmt.executeUpdate(INSERT);
 			}
