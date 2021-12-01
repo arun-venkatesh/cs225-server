@@ -104,7 +104,7 @@ public class Handler {
 
             	String INSERT = "INSERT INTO \"ContactTracingMaster\"( \n" +
 					"\tcontact_time, user_id_one, user_id_two, location_of_contact) \n" +
-					"\tVALUES(TO_TIMESTAMP(" + contact_time + "), " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
+					"\tVALUES(TO_TIMESTAMP(" + contact_time + "/1000) AT TIME ZONE \'PST\', " + user_id_one + ", " + user_id_two + ", " + "\'POINT(" + longitude + " " + latitude + ")\');";
             	
             	System.out.println(INSERT);
 				stmt.executeUpdate(INSERT);
