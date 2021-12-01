@@ -49,7 +49,7 @@ public class Cs225Application {
 		System.out.println("Init Completed");
 	}
 	
-    @Scheduled(fixedRate = 60000) //For now, runs every minute (Testing)
+    @Scheduled(fixedRate = 3600000) //For now, runs every minute (Testing)
     public void notifyUsers() throws FirebaseMessagingException, IOException {
     	
     	if(!isInitCalled)

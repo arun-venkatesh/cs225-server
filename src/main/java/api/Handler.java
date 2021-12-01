@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +37,10 @@ public class Handler {
 
 	@PostMapping("/upload")
 	public String dumpData(@RequestBody String data) throws Exception {
+		
+		
 		JSONArray obj = new JSONArray(data);
+		System.out.println(data);
 		
 		JSONObject returnObj = new JSONObject();
 		try
@@ -134,7 +138,7 @@ public class Handler {
 		{
 			//WRITE CODE HERE
 			/*
-			 *  {
+			 *  [{
 			 *     "name":"arun",
 			 *     "user_name":"arunvenkatesh",
 			 *     "secret_key":"password",
@@ -145,7 +149,7 @@ public class Handler {
 			 *     "state":"California",
 			 *     "city":"Riverside",
 			 *     "status":-1 //-1 : Negative, 0 - Symptomatic, 1 - Positive 
-			 *  }
+			 *  }]
 			 */
 
 			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -259,16 +263,21 @@ public class Handler {
 	}
 	
 	@PutMapping("/user")
-	public String updateUser(@RequestBody Map<String, String> json) throws Exception {
+	public String updateUser(@RequestBody String data) throws Exception {
+		
+		System.out.println(data);
+		JSONObject json = new JSONObject(data);
 		JSONObject returnObj = new JSONObject();
 		try
 		{
 			Boolean success = Boolean.FALSE;
 			//WRITE CODE HERE - Lets assume updates happen only for status and tokens
-			/*
+			/*{"user_name":"arun",
+			 * "data":
 			 *  {
 			 *     "registration_token":"24Zdsjbsdjadjadn283293",
 			 *     "status":-1 //-1 : Negative, 0 - Symptomatic, 1 - Positive 
+			 *  }
 			 *  }
 			 */
 
@@ -278,19 +287,20 @@ public class Handler {
 			((org.postgresql.PGConnection)conn).addDataType("box3d", PGbox3d.class);
 			Statement stmt = conn.createStatement();
 
-			String id = json.get("id");
-			String data = json.get("data");
+			String userName = json.getString("user_name");
+			String dataParam = json.getString("data");
 
-			JSONObject obj = new JSONObject(data);
+			JSONObject obj = new JSONObject(dataParam);
 
 			String registration_token = obj.get("registration_token").toString();
             String status = obj.get("status").toString();
 
 			String UPDATE_QUERY = "UPDATE \"UserMaster\" \n" +
                 "SET registration_token = \'" + registration_token + "\', status = " + status + "\n" +
-                "WHERE id = " + id + ";";
+                "WHERE user_name = '" + userName + "';";
 
 			stmt.executeUpdate(UPDATE_QUERY);
+			success = Boolean.TRUE;
 
 			conn.close();
 
