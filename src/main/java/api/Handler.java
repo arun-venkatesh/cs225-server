@@ -416,6 +416,10 @@ public class Handler {
 				userIdList.add(positiveOrSymptomaticResult.getInt("id"));
 			}
 			
+			if(userIdList.isEmpty())
+			{
+				return returnList;
+			}
 			String mainQuery = "select CTM1.contact_time as CTM1_time, CTM2.contact_time AS CTM2_time, CTM1.user_id_one, CTM1.user_id_two from public.\"ContactTracingMaster\" as CTM1, public.\"ContactTracingMaster\" as CTM2 where CTM1.user_id_one=CTM2.user_id_two and CTM1.user_id_two=CTM2.user_id_one and ST_DWithin(CTM1.location_of_contact, CTM2.location_of_contact, 1.828) and "
 					+ "(CTM1.user_id_one IN (";
 			

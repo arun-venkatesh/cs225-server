@@ -44,12 +44,15 @@ public class Cs225Application {
 		FirebaseOptions options = new FirebaseOptions.Builder()
 		  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
 		  .build();
-
-		FirebaseApp.initializeApp(options);
+		
+		if(FirebaseApp.getApps().size() <= 0)
+		{
+			FirebaseApp.initializeApp(options);
+		}
 		System.out.println("Init Completed");
 	}
 	
-    @Scheduled(fixedRate = 3600000) //For now, runs every minute (Testing)
+    @Scheduled(fixedRate = 60000) //For now, runs every minute (Testing)
     public void notifyUsers() throws FirebaseMessagingException, IOException {
     	
     	if(!isInitCalled)
@@ -62,6 +65,10 @@ public class Cs225Application {
     	
     	List<String> registrationTokens = Handler.getRegisterationTokensForScheduler();
     	
+    	if(registrationTokens == null || registrationTokens.isEmpty())
+    	{
+    		return;
+    	}
 //    	registrationTokens = Arrays.asList(
 //    			"faW9g2JnQRSXPG6CV6IntC:APA91bEeg216szQjCmN42TcXLopOujaraCQfNtl10IqRAa8g3f0HyLumK6_EiEQA1lYCw9pWb16Wdv9ps3AIKaVCQi3xG8cx7kTN9tLCukV19GAptX6eU3UplYL0Exsfm38e2h58ebD2"
 //    	);
